@@ -1,0 +1,728 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SHUT UP PIP 2.0</title>
+
+<style>
+body {
+  background: #171717;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 30px 15px;
+}
+
+h1 {
+  color: #ffcc55;
+  font-size: 35px;
+}
+
+button {
+  background: #e8a52c;
+  color: black;
+  border: none;
+  padding: 18px 30px;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 12px;
+  cursor: pointer;
+  margin: 8px;
+  touch-action: none;
+}
+
+button:active {
+  transform: scale(.92);
+}
+
+button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+#monedero {
+  background: #292929;
+  border: 2px solid #e8a52c;
+  border-radius: 15px;
+  padding: 15px;
+  margin: 20px auto;
+  max-width: 320px;
+}
+
+#monedas {
+  color: #ffcc55;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+#reloj {
+  color: #cccccc;
+  font-size: 16px;
+}
+
+/* CONTENEDOR DE PIP */
+
+#pipContainer {
+  display: none;
+  position: relative;
+  width: 210px;
+  margin: 25px auto;
+}
+
+#pip {
+  display: block;
+  width: 100%;
+  margin: 0;
+  cursor: pointer;
+}
+
+/* BOCA DE PIP */
+
+#bocaPip {
+  display: none;
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  object-fit: contain;
+  left: 53%;
+  top: 48%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+#mensaje {
+  color: #ffcc55;
+  font-size: 23px;
+  font-weight: bold;
+}
+
+#final {
+  display: none;
+  background: #292929;
+  padding: 25px;
+  border-radius: 15px;
+  margin-top: 25px;
+}
+
+#grabadora {
+  background: #252525;
+  border-radius: 15px;
+  padding: 20px;
+  margin-top: 30px;
+}
+
+#grabar {
+  background: #d94b4b;
+  color: white;
+  width: 90%;
+  max-width: 300px;
+}
+
+/* ANIMACIONES DE PIP Y SU BOCA */
+
+#pipContainer.enojado {
+  animation: temblar 0.2s infinite;
+}
+
+#pipContainer.acariciar {
+  animation: saltitos 0.35s infinite alternate;
+}
+
+@keyframes temblar {
+  0% { transform: translateX(-8px) rotate(-5deg); }
+  50% { transform: translateX(8px) rotate(5deg); }
+  100% { transform: translateX(0) rotate(0); }
+}
+
+@keyframes saltitos {
+  from { transform: translateY(0); }
+  to { transform: translateY(-18px); }
+}
+</style>
+</head>
+
+<body>
+
+<h1>SHUT UP, PIP!</h1>
+<p>¿Querés molestar a Pip?</p>
+
+<div id="monedero">
+  <h2>🪙 TU MONEDERO</h2>
+  <div id="monedas">0 monedas</div>
+  <p id="reloj">⏱️ Tiempo: 00:00</p>
+</div>
+
+<button id="botonMolestar" onclick="molestar()">
+¡APRETAME!
+</button>
+
+<br>
+
+<div id="pipContainer">
+
+  <img
+  id="pip"
+  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsf1E7qm9dlA6tuVPfSUtMbu5_ZwmIoKRKEsOuM67b4Q&s=10"
+  onclick="acariciar()"
+  alt="Pip"
+  >
+
+  <img
+  id="bocaPip"
+  src="https://cdn.discordapp.com/attachments/1572291362861219900/1572291497100050465/South_Park_OC_Base_Version_1_20261028160156.png?ex=6afdd610&is=6afc8490&hm=7efd5d39f6540d8083c6c0b0689b975953a99088f8361c850dfcb422f60e4d3c"
+  alt=""
+  aria-hidden="true"
+  >
+
+</div>
+
+<p id="mensaje"></p>
+
+<div id="grabadora">
+  <h2>🎙️ PIP PARROT MODE</h2>
+  <p>¡Decile algo a Pip!</p>
+
+  <button
+  id="grabar"
+  onpointerdown="empezarGrabacion(event)"
+  onpointerup="terminarGrabacion(event)"
+  onpointercancel="terminarGrabacion(event)"
+  oncontextmenu="return false"
+  >
+  MANTENER PARA HABLAR
+  </button>
+
+  <p id="estado">Esperando tu voz...</p>
+</div>
+
+<div id="final">
+  <h1>🇫🇷 FINAL SECRETO</h1>
+  <h2>DEMASIADO CARIÑO...</h2>
+  <p>
+  Pip recibió tanto cariño que no sabía
+  cómo reaccionar.
+  </p>
+  <p>Se fue a descansar.</p>
+  <h2>THE END.</h2>
+
+  <button onclick="reiniciar()">
+  VOLVER A MOLESTAR A PIP
+  </button>
+</div>
+
+<script>
+
+// VARIABLES DEL JUEGO
+
+let clics = 0;
+let caricias = 0;
+let terminado = false;
+let tiempoCaricia;
+
+// ELEMENTOS
+
+const pip = document.getElementById("pip");
+const pipContainer = document.getElementById("pipContainer");
+const bocaPip = document.getElementById("bocaPip");
+const mensaje = document.getElementById("mensaje");
+const final = document.getElementById("final");
+const estado = document.getElementById("estado");
+const botonGrabar = document.getElementById("grabar");
+const botonMolestar = document.getElementById("botonMolestar");
+const contadorMonedas = document.getElementById("monedas");
+const reloj = document.getElementById("reloj");
+
+// BOCA
+
+function mostrarBoca() {
+  if (!terminado) {
+    bocaPip.style.display = "block";
+  }
+}
+
+function ocultarBoca() {
+  bocaPip.style.display = "none";
+}
+
+// AUDIO
+
+let grabador = null;
+let partesAudio = [];
+let stream = null;
+let audioPip = null;
+let grabando = false;
+let manteniendo = false;
+let urlAudio = null;
+let numeroGrabacion = 0;
+
+// MONEDAS
+
+let monedas = 0;
+let segundosJugados = 0;
+let molestiasTotales = 0;
+let cariciasTotales = 0;
+
+// CARGAR PROGRESO
+
+function cargarProgreso() {
+  try {
+    const datos = JSON.parse(
+      localStorage.getItem("shutUpPipSave")
+    );
+
+    if (datos) {
+      monedas = Math.max(0, Number(datos.monedas) || 0);
+      segundosJugados = Math.max(0, Number(datos.segundosJugados) || 0);
+      molestiasTotales = Math.max(0, Number(datos.molestiasTotales) || 0);
+      cariciasTotales = Math.max(0, Number(datos.cariciasTotales) || 0);
+    }
+  } catch (error) {
+    console.log("No se pudo cargar el guardado:", error);
+  }
+
+  actualizarMonedero();
+}
+
+// GUARDAR PROGRESO
+
+function guardarProgreso() {
+  try {
+    localStorage.setItem("shutUpPipSave", JSON.stringify({
+      monedas: monedas,
+      segundosJugados: segundosJugados,
+      molestiasTotales: molestiasTotales,
+      cariciasTotales: cariciasTotales
+    }));
+  } catch (error) {
+    console.log("No se pudo guardar:", error);
+  }
+}
+
+// MONEDERO
+
+function actualizarMonedero() {
+  contadorMonedas.textContent =
+    monedas + (monedas === 1 ? " moneda" : " monedas");
+
+  let minutos = Math.floor(segundosJugados / 60);
+  let segundos = segundosJugados % 60;
+
+  reloj.textContent =
+    "⏱️ Tiempo: " +
+    String(minutos).padStart(2, "0") + ":" +
+    String(segundos).padStart(2, "0");
+}
+
+function ganarMoneda(motivo) {
+  monedas++;
+  actualizarMonedero();
+  guardarProgreso();
+
+  mensaje.textContent = "🪙 ¡Ganaste una moneda! " + motivo;
+}
+
+cargarProgreso();
+
+// RECOMPENSA POR TIEMPO
+
+setInterval(() => {
+  if (terminado) return;
+
+  segundosJugados++;
+  actualizarMonedero();
+
+  if (segundosJugados % 30 === 0) {
+    ganarMoneda("¡Por pasar tiempo con Pip!");
+  } else {
+    guardarProgreso();
+  }
+}, 1000);
+
+// MOLESTAR
+
+function molestar() {
+  if (terminado) return;
+
+  clearTimeout(tiempoCaricia);
+
+  pipContainer.style.display = "block";
+
+  pipContainer.classList.remove("acariciar");
+
+  clics++;
+  molestiasTotales++;
+
+  if (molestiasTotales % 10 === 0) {
+    ganarMoneda("¡Molestaste mucho a Pip!");
+  } else {
+    guardarProgreso();
+  }
+
+  let frase;
+
+  if (clics <= 2) {
+    frase = "Lunchy Munchies!";
+    mensaje.textContent = "Pip: Lunchy Munchies!";
+    pipContainer.classList.remove("enojado");
+  }
+  else if (clics <= 4) {
+    frase = "Please stop!";
+    mensaje.textContent = "Pip está molesto...";
+    pipContainer.classList.remove("enojado");
+    void pipContainer.offsetWidth;
+    pipContainer.classList.add("enojado");
+  }
+  else {
+    frase = "LEAVE ME ALONE!";
+    mensaje.textContent = "PIP ESTÁ FURIOSO!!!";
+    pipContainer.classList.add("enojado");
+  }
+
+  hablar(frase);
+}
+
+// ACARICIAR
+
+function acariciar() {
+  if (terminado) return;
+
+  caricias++;
+  cariciasTotales++;
+
+  clearTimeout(tiempoCaricia);
+
+  pipContainer.classList.remove("enojado");
+  pipContainer.classList.remove("acariciar");
+
+  void pipContainer.offsetWidth;
+  pipContainer.classList.add("acariciar");
+
+  clics = 0;
+
+  if (cariciasTotales % 10 === 0) {
+    ganarMoneda("¡Pip recibió mucho cariño!");
+  } else {
+    guardarProgreso();
+  }
+
+  if (caricias >= 20) {
+    terminar();
+    return;
+  }
+
+  mensaje.textContent =
+    "Pip: Thank you! ❤️ (" + caricias + "/20)";
+
+  hablar("Thank you!");
+
+  tiempoCaricia = setTimeout(() => {
+    if (terminado) return;
+
+    pipContainer.classList.remove("acariciar");
+    mensaje.textContent = "Pip está tranquilo ❤️";
+  }, 2500);
+}
+
+// FINAL SECRETO
+
+function terminar() {
+  if (terminado) return;
+
+  terminado = true;
+
+  clearTimeout(tiempoCaricia);
+
+  numeroGrabacion++;
+  manteniendo = false;
+  grabando = false;
+
+  ocultarBoca();
+
+  if (grabador && grabador.state !== "inactive") {
+    grabador.onstop = null;
+    grabador.stop();
+  }
+
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+    stream = null;
+  }
+
+  if (audioPip) {
+    audioPip.pause();
+    audioPip.currentTime = 0;
+    audioPip.onended = null;
+    audioPip = null;
+  }
+
+  if ("speechSynthesis" in window) {
+    speechSynthesis.cancel();
+  }
+
+  botonGrabar.disabled = true;
+  botonMolestar.disabled = true;
+
+  estado.textContent = "Pip se fue a descansar. 🇫🇷";
+  botonGrabar.textContent = "PIP ESTÁ DESCANSANDO";
+
+  pipContainer.style.display = "none";
+  mensaje.textContent = "";
+
+  final.style.display = "block";
+
+  hablar("Goodbye Pip!");
+}
+
+// REINICIAR
+
+function reiniciar() {
+  if (audioPip) {
+    audioPip.pause();
+    audioPip.currentTime = 0;
+    audioPip.onended = null;
+    audioPip = null;
+  }
+
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+    stream = null;
+  }
+
+  if (urlAudio) {
+    URL.revokeObjectURL(urlAudio);
+    urlAudio = null;
+  }
+
+  numeroGrabacion++;
+
+  clics = 0;
+  caricias = 0;
+  terminado = false;
+  grabando = false;
+  manteniendo = false;
+  partesAudio = [];
+
+  clearTimeout(tiempoCaricia);
+
+  if ("speechSynthesis" in window) {
+    speechSynthesis.cancel();
+  }
+
+  ocultarBoca();
+
+  botonGrabar.disabled = false;
+  botonMolestar.disabled = false;
+
+  botonGrabar.textContent = "MANTENER PARA HABLAR";
+  estado.textContent = "Esperando tu voz...";
+  mensaje.textContent = "Pip volvió a casa.";
+
+  pipContainer.style.display = "none";
+  pipContainer.classList.remove("enojado", "acariciar");
+
+  final.style.display = "none";
+}
+
+// EMPEZAR GRABACIÓN
+
+async function empezarGrabacion(event) {
+  event.preventDefault();
+
+  if (terminado || manteniendo || grabando) return;
+
+  manteniendo = true;
+
+  const miGrabacion = ++numeroGrabacion;
+
+  try {
+    if (!navigator.mediaDevices ||
+        !navigator.mediaDevices.getUserMedia ||
+        !window.MediaRecorder) {
+      throw new Error("Tu navegador no admite grabación.");
+    }
+
+    estado.textContent = "Pidiendo permiso al micrófono...";
+
+    const nuevoStream = await navigator.mediaDevices.getUserMedia({
+      audio: true
+    });
+
+    if (terminado || !manteniendo ||
+        miGrabacion !== numeroGrabacion) {
+      nuevoStream.getTracks().forEach(track => track.stop());
+      return;
+    }
+
+    stream = nuevoStream;
+    partesAudio = [];
+
+    grabador = new MediaRecorder(stream);
+
+    grabador.ondataavailable = (e) => {
+      if (!terminado && e.data.size > 0) {
+        partesAudio.push(e.data);
+      }
+    };
+
+    grabador.onstop = () => {
+      grabando = false;
+
+      if (terminado || miGrabacion !== numeroGrabacion) return;
+
+      reproducirGrabacion();
+    };
+
+    grabador.start();
+
+    grabando = true;
+
+    estado.textContent = "🔴 ¡Pip está escuchando!";
+    botonGrabar.textContent = "SOLTÁ PARA TERMINAR";
+
+  } catch (error) {
+    if (miGrabacion === numeroGrabacion && !terminado) {
+      manteniendo = false;
+
+      estado.textContent =
+        "No se pudo usar el micrófono. Revisá los permisos.";
+
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+      }
+
+      console.log(error);
+    }
+  }
+}
+
+// TERMINAR GRABACIÓN
+
+function terminarGrabacion(event) {
+  event.preventDefault();
+
+  manteniendo = false;
+
+  if (terminado) return;
+
+  if (grabador && grabando && grabador.state === "recording") {
+    grabador.stop();
+    grabando = false;
+  }
+
+  botonGrabar.textContent = "MANTENER PARA HABLAR";
+}
+
+// REPRODUCIR GRABACIÓN
+
+function reproducirGrabacion() {
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+    stream = null;
+  }
+
+  if (terminado) return;
+
+  if (partesAudio.length === 0) {
+    estado.textContent = "No se grabó ningún audio.";
+    return;
+  }
+
+  const audio = new Blob(partesAudio, {
+    type: grabador.mimeType || "audio/webm"
+  });
+
+  if (urlAudio) {
+    URL.revokeObjectURL(urlAudio);
+  }
+
+  urlAudio = URL.createObjectURL(audio);
+
+  if (audioPip) {
+    audioPip.pause();
+  }
+
+  audioPip = new Audio(urlAudio);
+
+  estado.textContent = "🇫🇷 Pip está repitiendo tu voz...";
+
+  pipContainer.style.display = "block";
+
+  audioPip.onplay = () => {
+    if (!terminado) mostrarBoca();
+  };
+
+  audioPip.onpause = () => {
+    ocultarBoca();
+  };
+
+  audioPip.onended = () => {
+    ocultarBoca();
+
+    if (terminado) return;
+
+    estado.textContent = "Pip terminó de hablar.";
+    mensaje.textContent = "Pip te está mirando... 🇫🇷";
+  };
+
+  audioPip.play()
+    .then(() => {
+      if (terminado) {
+        audioPip.pause();
+        ocultarBoca();
+        pipContainer.style.display = "none";
+        return;
+      }
+
+      mensaje.textContent = "Pip está hablando... 🎙️";
+    })
+    .catch(() => {
+      ocultarBoca();
+
+      if (!terminado) {
+        estado.textContent = "No se pudo reproducir el audio.";
+      }
+    });
+}
+
+// VOZ DE PIP
+
+function hablar(frase) {
+  if (terminado && frase !== "Goodbye Pip!") return;
+
+  if ("speechSynthesis" in window) {
+    speechSynthesis.cancel();
+    ocultarBoca();
+
+    const voz = new SpeechSynthesisUtterance(frase);
+
+    voz.lang = "en-GB";
+    voz.rate = 0.9;
+    voz.pitch = 1;
+
+    voz.onstart = () => {
+      if (!terminado) mostrarBoca();
+    };
+
+    voz.onend = () => {
+      ocultarBoca();
+    };
+
+    voz.onerror = () => {
+      ocultarBoca();
+    };
+
+    speechSynthesis.speak(voz);
+  }
+}
+
+// GUARDAR AL SALIR
+
+window.addEventListener("pagehide", guardarProgreso);
+
+</script>
+</body>
+</html>

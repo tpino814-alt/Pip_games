@@ -1,0 +1,160 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PIP_GAMES.IO</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #171717;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+header {
+  background: #242424;
+  padding: 22px 10px;
+  border-bottom: 3px solid #e8a52c;
+}
+
+h1 {
+  color: #ffcc55;
+  font-size: 36px;
+  margin: 0;
+}
+
+header p {
+  color: #aaa;
+  margin-bottom: 0;
+}
+
+main {
+  padding: 25px 15px;
+  max-width: 600px;
+  margin: auto;
+}
+
+.presentacion {
+  background: #242424;
+  padding: 25px;
+  border-radius: 18px;
+  margin-bottom: 25px;
+}
+
+.presentacion h2 {
+  color: #ffcc55;
+}
+
+.juego {
+  background: #292929;
+  padding: 20px;
+  border-radius: 16px;
+  border: 2px solid #e8a52c;
+  margin-bottom: 20px;
+}
+
+.juego h2 {
+  color: #ffcc55;
+}
+
+.juego p {
+  color: #ccc;
+}
+
+button {
+  background: #e8a52c;
+  color: black;
+  border: none;
+  padding: 15px 25px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+}
+
+button:active {
+  transform: scale(.95);
+}
+
+.proximamente {
+  opacity: .55;
+  border-color: #555;
+}
+
+.proximamente button {
+  background: #555;
+  color: white;
+  cursor: not-allowed;
+}
+
+footer {
+  color: #777;
+  padding: 25px;
+  font-size: 13px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>PIP_GAMES.IO</h1>
+  <p>Welcome to the world of Pip!</p>
+</header>
+
+<main>
+
+  <section class="presentacion">
+    <h2>🎮 ¡BIENVENIDO!</h2>
+    <p>
+      Una colección de juegos protagonizados
+      por el mismísimo Pip.
+    </p>
+  </section>
+
+  <section class="juego">
+    <h2>🇫🇷 SHUT UP, PIP!</h2>
+    <p>
+      Molestá a Pip, acaricialo, ganá monedas
+      y descubrí el final secreto.
+    </p>
+
+    <button onclick="abrirJuego()">
+      ▶ JUGAR
+    </button>
+  </section>
+
+  <section class="juego proximamente">
+    <h2>🔒 PRÓXIMAMENTE</h2>
+    <p>¡Más juegos de Pip están en camino!</p>
+    <button disabled>
+      NO DISPONIBLE
+    </button>
+  </section>
+
+</main>
+
+<footer>
+  PIP_GAMES.IO © 2026
+  <br>
+  Un universo lleno de Pip.
+</footer>
+
+<script>
+function abrirJuego() {
+  window.location.href = "shut-up-pip.html";
+}
+</script>
+
+</body>
+</html>
